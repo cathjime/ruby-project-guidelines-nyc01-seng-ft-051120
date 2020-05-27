@@ -17,23 +17,7 @@ class StoreApp
         end
     end 
 
-    def product_price_menu
-        y = Product.all.map do |product|
-            "🔹 #{product.name}"  
-        end  
-        TTY::Prompt.new.select("Choose a product to change price.", y)
-    end
 
-    def update_product_price
-        product_choice = gets.chomp
-
-        chosen_product = Product.all.find do |product|
-                        product.name == product_choice
-                        end
-        puts "The current price is: $#{chosen_product.price}. Please enter a new price."      
-        product.update(price:new_price) #update price = new price
-        puts "The price has been reset to $#{chosen_product.price}."
-    end
 
 
     def return_to_main
@@ -48,12 +32,10 @@ class StoreApp
     end 
 
     def main_menu   
-        main_menu_text     #do we need to call this on an instance?
-                            
+        main_menu_text     
+
         input = gets.chomp.to_i
-        # binding.pry
-        #how will tty interact with the below if/else statements?
-        #is there a better or more efficient way to do this?
+    
         if input == 1
             view_all_products
             return_to_main
@@ -62,26 +44,29 @@ class StoreApp
             display_products_by_category    #ERROR not recognizing products
             return_to_main
         elsif input == 3
-            add_product
+            add_product        #ERROR not recognizing category/name
         elsif input == 4
             add_category
+            return_to_main
         elsif input == 5
             product_price_menu
             update_product_price        #ERROR not recognizing price
             return_to_main
         elsif input == 6
-            delete_product
+            delete_product          #ERROR undefined method `destroy_by'
         elsif input == 7    #HOW WOULD WE EXIT APP?
-            #exit app
             puts "You are now logged out. Goodbye! 👋 "
+            run
         else 
             puts "Invalid menu option. Please enter a number between 1 - 7."
+            sleep(1)
             main_menu
         end 
 
     end 
 
     def main_menu_text #prints list of menu options 
+        puts " "
         puts "Main Menu:"
         puts "1. View all products"
         puts "2. View products by category"
@@ -90,7 +75,9 @@ class StoreApp
         puts "5. Update product price"
         puts "6. Delete a product"
         puts "7. Log out" #call method that doesn't have  return value - i.e. goodbye text
+        puts " "
         puts "Choose an action by entering a number." #how to incorporate error using tty prompt
+        puts " "
     end 
 
 
@@ -103,11 +90,19 @@ class StoreApp
     end 
     
     def view_by_category #pulls up category list
-        y = Category.all.map do |category|
-            "🔸 #{category.name}"
+
+        Category.all.each do |category|
+            puts "🔸#{category.name}"
         end 
+
+        puts " "
+        puts "Please type a category from the list above to view products."
+        puts " "
+        # y = Category.all.map do |category|
+        #     "🔸#{category.name}"
+        # end 
         
-        TTY::Prompt.new.select("Choose a category to view products.", y)
+        # # TTY::Prompt.new.select("Choose a category to view products.", y)
     end 
 
 
@@ -123,6 +118,91 @@ class StoreApp
             puts " "
     end
 
+
+    def product_price_menu  #prints out list of products to choose from
+        y = Product.all.map do |product|
+            "🔹 #{product.name}"  
+        end  
+        puts " "
+        TTY::Prompt.new.select("Choose a product to change price.\r\n", y)
+    end
+
+
+    def update_product_price
+        product_choice = gets.chomp
+    
+        chosen_product = Product.all.find do |product|
+                        product.name == product_choice
+                        end
+        binding.pry
+        puts "The current price is: $#{chosen_product.price}. Please enter a new price."      
+        product.update(price:new_price) #update price = new price
+        puts "The price has been reset to $#{chosen_product.price}."
+    end
+
+    def add_category
+        puts "Type in the name of a category you would like to add."
+        inputted_name = gets.chomp.capitalize
+        Category.create(name:inputted_name)
+        puts "#{inputted_name} has been added as a new category"
+    end
+
+    def add_product
+        puts " "
+        puts "Let's add a new product!"
+        sleep(1)
+        puts " "
+        puts "To start, please enter a product name:" 
+        puts " "
+        name_entered = gets.chomp
+        puts " "
+        puts "Please enter a price for #{name_entered}:"
+        puts " "
+        price_entered = gets.chomp.to_f
+        puts " "
+        puts "Please enter a tagline for #{name_entered}:"
+        puts " "
+        tagline_entered = gets.chomp
+        new_product = Product.create(name: name_entered, price: price_entered, tagline: tagline_entered)
+        puts " "
+        puts "You've successfully added #{name_entered} to your inventory."
+        puts " "
+
+        y = Category.all.map do |category|
+            "🔸#{category.name}"
+        end 
+
+        TTY::Prompt.new.select("Please assign it to a category below:", y)
+
+        category_choice = gets.chomp
+
+        category_to_assign = Category.all.find do |category|
+            category.name == category_choice
+            end
+
+        ProductCategory.create(product: new_product, category: category_to_assign)
+    end
+
+    def delete_product
+
+        y = Product.all.map do |product|
+            "🔹 #{product.name}"  
+            end  
+        puts " "
+        TTY::Prompt.new.select("Choose a product to delete it.\r\n", y)
+
+        product_choice_name = gets.chomp
+
+        product_choice = Product.find_by(name: product_choice_name)
+        ProductCategory.destroy_by(product: product_choice)
+
+        Product.destroy_by(name: product_choice_name)
+        puts " "
+        puts "🗑"
+        puts " "
+        sleep(1)
+        puts "#{product_choice_name} has been deleted from store inventory."
+    end
    
     # private
     def greeting

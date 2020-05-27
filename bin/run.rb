@@ -5,9 +5,9 @@ app = StoreApp.new
 
 app.run
 # app.greeting
-#  app.view_by_category 
+#  app.product_price_menu
 
 
 
 # puts "HELLO WORLD"
-puts "HELLO WORLD"
+
