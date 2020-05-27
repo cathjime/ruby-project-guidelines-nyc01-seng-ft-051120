@@ -8,4 +8,8 @@ class Product < ActiveRecord::Base
     #     end 
     # end 
 
+    def all_products
+        Product.all
+    end 
+
 end
