@@ -13,7 +13,8 @@ class StoreApp
         if @@valid_user_array.include?(user_input)
         puts "Hi #{user_input.capitalize}! Here is the main menu: "  #present list of options
         return main_menu
-        else puts "Access denied. Not a recognized user."  #- calls run again to send user back to welcome prompt 
+        else puts "Access denied. Not a recognized user." 
+        run  #- calls run again to send user back to welcome prompt 
         end
     end 
 
@@ -43,16 +44,17 @@ class StoreApp
             view_by_category
             return_to_main
         elsif input == 3
-            add_product        #ERROR not recognizing category/name
+            add_product 
+            return_to_main       
         elsif input == 4
             add_category
             return_to_main
         elsif input == 5
             product_menu
-            update_product_price        #ERROR not recognizing price
             return_to_main
         elsif input == 6
-            delete_product          #ERROR undefined method `destroy_by'
+            delete_product 
+            return_to_main         #ERROR undefined method `destroy_by'
         elsif input == 7    #HOW WOULD WE EXIT APP?
             puts "You are now logged out. Goodbye! 👋 "
             run
@@ -112,22 +114,23 @@ class StoreApp
 
     def product_menu  #prints out list of products to choose from
         y = Product.all.map do |product|
-            "🔹 #{product.name}"  
+            "#{product.name}"  
         end  
         puts " "
-        TTY::Prompt.new.select("Choose a product to change price.\r\n", y)
+        product_choice = TTY::Prompt.new.select("Choose a product to change price.\r\n", y)
+        update_product_price(product_choice)
     end
 
 
-    def update_product_price
-        product_choice = gets.chomp
-    
+    def update_product_price(input)
+        
         chosen_product = Product.all.find do |product|
-                        product.name == product_choice
+                        product.name == input
                         end
-        binding.pry
-        puts "The current price is: $#{chosen_product.price}. Please enter a new price."      
-        product.update(price:new_price) #update price = new price
+        puts " "
+        puts "The current price is: $#{chosen_product.price}. Please enter a new price. Make sure it is a number, or the price will default to $0 :"    
+        new_price = gets.chomp.to_f  
+        chosen_product.update(price:new_price) 
         puts "The price has been reset to $#{chosen_product.price}."
     end
 
@@ -145,9 +148,9 @@ class StoreApp
         puts " "
         puts "To start, please enter a product name:" 
         puts " "
-        name_entered = gets.chomp
+        name_entered = gets.chomp.capitalize
         puts " "
-        puts "Please enter a price for #{name_entered}:"
+        puts "Please enter a price for #{name_entered}. Please enter a number, or your price will default to $0 :"
         puts " "
         price_entered = gets.chomp.to_f
         puts " "
@@ -156,19 +159,19 @@ class StoreApp
         tagline_entered = gets.chomp
         new_product = Product.create(name: name_entered, price: price_entered, tagline: tagline_entered)
         puts " "
-        puts "You've successfully added #{name_entered} to your inventory."
+        puts "🎉 You've successfully added #{name_entered} to your inventory."
         puts " "
 
         y = Category.all.map do |category|
-            "🔸#{category.name}"
+            "#{category.name}"
         end 
 
         category_choice = TTY::Prompt.new.select("Please assign it to a category below:", y)
 
 
         category_to_assign = Category.all.find do |category|
-            category.name == category_choice
-            end
+                                category.name == category_choice
+                                end
 
         ProductCategory.create(product: new_product, category: category_to_assign)
     end
@@ -176,19 +179,22 @@ class StoreApp
     def delete_product
 
         y = Product.all.map do |product|
-            "🔹 #{product.name}"  
+            "#{product.name}"  
             end  
         puts " "
-        TTY::Prompt.new.select("Choose a product to delete it.\r\n", y)
-
-        product_choice_name = gets.chomp
+        product_choice_name = TTY::Prompt.new.select("Choose a product to delete it.\r\n", y)
 
         product_choice = Product.find_by(name: product_choice_name)
-        ProductCategory.destroy_by(product: product_choice)
 
-        Product.destroy_by(name: product_choice_name)
+        ProductCategory.where(product: product_choice).destroy_all
+
+        Product.where(name: product_choice_name).destroy_all
+
+        # ProductCategory.destroy_by(product: product_choice)
+
+        # Product.destroy_by(name: product_choice_name)
         puts " "
-        puts "🗑"
+        puts "🗑    🗑    🗑"
         puts " "
         sleep(1)
         puts "#{product_choice_name} has been deleted from store inventory."
