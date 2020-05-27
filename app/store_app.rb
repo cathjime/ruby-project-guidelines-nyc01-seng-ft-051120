@@ -86,7 +86,9 @@ class StoreApp
     def view_all_products #pulls up product list 
         puts " "
         Product.all.each do |product|
-        puts "🔹 #{product.name} - $#{product.price}"
+        puts "🔹 #{product.name} - $#{product.price.round(2)}"
+        puts "   #{product.tagline}"
+        puts " "
         end 
         puts " "
     end 
@@ -107,7 +109,7 @@ class StoreApp
                     end
                     puts " "
             chosen.products.each do |product|
-                puts "🔹 #{product.name} - #{product.price}"
+                puts "🔹 #{product.name} - #{product.price.round(2)}"
             end
             puts " "
     end
@@ -129,10 +131,10 @@ class StoreApp
                         product.name == input
                         end
         puts " "
-        puts "The current price is: $#{chosen_product.price}. Please enter a new price. Make sure it is a number, or the price will default to $0 :"    
+        puts "The current price is: $#{chosen_product.price.round(2)}. Please enter a new price. Make sure it is a number, or the price will default to $0 :"    
         new_price = gets.chomp.to_f  
         chosen_product.update(price:new_price) 
-        puts "The price has been reset to $#{chosen_product.price}."
+        puts "The price has been reset to $#{chosen_product.price.round(2)}."
     end
 
     def add_category
@@ -230,15 +232,15 @@ class StoreApp
         input = gets.chomp.to_i
         if input == 1
             Product.all.each do |product|           
-                product.update(price: (product.price - (product.price * 0.1)))
+                product.update(price: (product.price - (product.price * 0.1)).round(2))
             end
         elsif input == 2
             Product.all.each do |product|           
-                product.update(price: (product.price - (product.price * 0.25)))
+                product.update(price: (product.price - (product.price * 0.25)).round(2))
             end 
         elsif input == 3
             Product.all.each do |product|           
-                product.update(price: (product.price - (product.price * 0.5)))
+                product.update(price: (product.price - (product.price * 0.5)).round(2))
             end
         else 
             puts "Please enter a valid discount option."

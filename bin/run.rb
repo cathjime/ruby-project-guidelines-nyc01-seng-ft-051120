@@ -3,10 +3,10 @@ require "pry"
 # binding.pry
 app = StoreApp.new
 
-# app.run
+app.run
 # app.greeting
 #  app.product_price_menu
-app.storewide_discounts
+# app.storewide_discounts
 
 
 
