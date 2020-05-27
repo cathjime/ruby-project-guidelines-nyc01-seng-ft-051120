@@ -41,7 +41,6 @@ class StoreApp
             return_to_main
         elsif input == 2
             view_by_category
-            display_products_by_category    #ERROR not recognizing products
             return_to_main
         elsif input == 3
             add_product        #ERROR not recognizing category/name
@@ -49,7 +48,7 @@ class StoreApp
             add_category
             return_to_main
         elsif input == 5
-            product_price_menu
+            product_menu
             update_product_price        #ERROR not recognizing price
             return_to_main
         elsif input == 6
@@ -68,7 +67,7 @@ class StoreApp
     def main_menu_text #prints list of menu options 
         puts " "
         puts "Main Menu:"
-        puts "1. View all products"
+        puts "1️. View all products"
         puts "2. View products by category"
         puts "3. Add a product"
         puts "4. Add a category"
@@ -90,24 +89,16 @@ class StoreApp
     end 
     
     def view_by_category #pulls up category list
-
-        Category.all.each do |category|
-            puts "🔸#{category.name}"
+        y = Category.all.map do |category|
+            "#{category.name}"
         end 
-
-        puts " "
-        puts "Please type a category from the list above to view products."
-        puts " "
-        # y = Category.all.map do |category|
-        #     "🔸#{category.name}"
-        # end 
         
-        # # TTY::Prompt.new.select("Choose a category to view products.", y)
+        category_choice = TTY::Prompt.new.select("Choose a category to view products.", y)
+        display_products_by_category(category_choice)
     end 
 
 
-    def display_products_by_category   #ERROR - products is undefined
-        category_choice = gets.chomp
+    def display_products_by_category(category_choice)   #ERROR - products is undefined
             chosen = Category.all.find do |category|
                     category.name == category_choice
                     end
@@ -119,7 +110,7 @@ class StoreApp
     end
 
 
-    def product_price_menu  #prints out list of products to choose from
+    def product_menu  #prints out list of products to choose from
         y = Product.all.map do |product|
             "🔹 #{product.name}"  
         end  
@@ -172,9 +163,8 @@ class StoreApp
             "🔸#{category.name}"
         end 
 
-        TTY::Prompt.new.select("Please assign it to a category below:", y)
+        category_choice = TTY::Prompt.new.select("Please assign it to a category below:", y)
 
-        category_choice = gets.chomp
 
         category_to_assign = Category.all.find do |category|
             category.name == category_choice
