@@ -19,8 +19,6 @@ class StoreApp
     end 
 
 
-
-
     def return_to_main
         puts "Type 'r' to return to main menu."
         input = gets.chomp
@@ -54,12 +52,15 @@ class StoreApp
             return_to_main
         elsif input == 6
             delete_product 
-            return_to_main         #ERROR undefined method `destroy_by'
-        elsif input == 7    #HOW WOULD WE EXIT APP?
+            return_to_main 
+        elsif input == 7     
+            storewide_discounts
+            return_to_main 
+        elsif input == 8    #HOW WOULD WE EXIT APP?
             puts "You are now logged out. Goodbye! 👋 "
             run
         else 
-            puts "Invalid menu option. Please enter a number between 1 - 7."
+            puts "Invalid menu option. Please enter a number between 1 - 8."
             sleep(1)
             main_menu
         end 
@@ -75,12 +76,12 @@ class StoreApp
         puts "4. Add a category"
         puts "5. Update product price"
         puts "6. Delete a product"
-        puts "7. Log out" #call method that doesn't have  return value - i.e. goodbye text
+        puts "7. Apply storewide discount"
+        puts "8. Log out" #call method that doesn't have  return value - i.e. goodbye text
         puts " "
         puts "Choose an action by entering a number." #how to incorporate error using tty prompt
         puts " "
     end 
-
 
     def view_all_products #pulls up product list 
         puts " "
@@ -219,5 +220,31 @@ class StoreApp
         puts " "
     end 
 
+    def storewide_discounts
+        puts " "
+        puts "1. 10%"
+        puts "2. 25%"
+        puts "3. 50%"
+        puts " "
+        puts "Please select 1-3 to apply the storewide discount."
+        input = gets.chomp.to_i
+        if input == 1
+            Product.all.each do |product|           
+                product.update(price: (product.price - (product.price * 0.1)))
+            end
+        elsif input == 2
+            Product.all.each do |product|           
+                product.update(price: (product.price - (product.price * 0.25)))
+            end 
+        elsif input == 3
+            Product.all.each do |product|           
+                product.update(price: (product.price - (product.price * 0.5)))
+            end
+        else 
+            puts "Please enter a valid discount option."
+        end
+
+        # binding.pry
+    end 
 
 end 
