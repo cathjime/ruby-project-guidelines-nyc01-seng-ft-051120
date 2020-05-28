@@ -210,15 +210,14 @@ class StoreApp
         puts " "
         product_choice_name = TTY::Prompt.new.select("Choose a product to delete it.\r\n", y)
 
+        # input = gets.chomp
+
         product_choice = Product.find_by(name: product_choice_name)
 
         ProductCategory.where(product: product_choice).destroy_all
 
         Product.where(name: product_choice_name).destroy_all
 
-        # ProductCategory.destroy_by(product: product_choice)
-
-        # Product.destroy_by(name: product_choice_name)
         puts " "
         puts "🗑    🗑    🗑"
         puts " "
