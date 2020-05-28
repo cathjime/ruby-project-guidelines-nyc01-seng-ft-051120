@@ -5,12 +5,11 @@ class StoreApp
 
     prompt = TTY::Prompt.new
    
-    @@valid_user_array = ["michael", "dwight", "pam"] #should this be a class variable? #create method for this
-
     def run 
         greeting
-        user_input = gets.chomp.downcase
-        if @@valid_user_array.include?(user_input)
+        user_input = gets.chomp.downcase 
+        if valid_user_array.include?(user_input)
+        puts " "
         puts "Hi #{user_input.capitalize}! Here is the main menu: "  #present list of options
         return main_menu
         else puts "Access denied. Not a recognized user." 
@@ -18,6 +17,11 @@ class StoreApp
         end
     end 
 
+    def valid_user_array
+        User.all.map do |user|
+            user.name
+        end
+    end
 
     def return_to_main
         puts "Type 'r' to return to main menu."
@@ -56,11 +60,19 @@ class StoreApp
         elsif input == 7     
             storewide_discounts
             return_to_main 
-        elsif input == 8    #HOW WOULD WE EXIT APP?
+        elsif input == 8
+            add_a_user
+            return_to_main 
+        elsif input == 9
+            delete_a_user
+            return_to_main 
+        elsif input == 10   
+            puts " " 
             puts "You are now logged out. Goodbye! 👋 "
-            run
+            puts " "
+            return
         else 
-            puts "Invalid menu option. Please enter a number between 1 - 8."
+            puts "Invalid menu option. Please enter a number between 1 - 10."
             sleep(1)
             main_menu
         end 
@@ -69,7 +81,8 @@ class StoreApp
 
     def main_menu_text #prints list of menu options 
         puts " "
-        puts "Main Menu:"
+        puts "🧿 Main Menu: 🧿"
+        puts " "
         puts "1️. View all products"
         puts "2. View products by category"
         puts "3. Add a product"
@@ -77,7 +90,9 @@ class StoreApp
         puts "5. Update product price"
         puts "6. Delete a product"
         puts "7. Apply storewide discount"
-        puts "8. Log out" #call method that doesn't have  return value - i.e. goodbye text
+        puts "8. Add a user"
+        puts "9. Delete a user"
+        puts "10. Log out" #call method that doesn't have  return value - i.e. goodbye text
         puts " "
         puts "Choose an action by entering a number." #how to incorporate error using tty prompt
         puts " "
@@ -86,7 +101,7 @@ class StoreApp
     def view_all_products #pulls up product list 
         puts " "
         Product.all.each do |product|
-        puts "🔹 #{product.name} - $#{product.price.round(2)}"
+        puts "🔸 #{product.name} - $#{product.price.round(2)}"
         puts "   #{product.tagline}"
         puts " "
         end 
@@ -109,7 +124,8 @@ class StoreApp
                     end
                     puts " "
             chosen.products.each do |product|
-                puts "🔹 #{product.name} - #{product.price.round(2)}"
+                puts "🔸 #{product.name} - #{product.price.round(2)} - #{product.tagline}"
+                puts " "
             end
             puts " "
     end
@@ -134,14 +150,18 @@ class StoreApp
         puts "The current price is: $#{chosen_product.price.round(2)}. Please enter a new price. Make sure it is a number, or the price will default to $0 :"    
         new_price = gets.chomp.to_f  
         chosen_product.update(price:new_price) 
+        puts " "
         puts "The price has been reset to $#{chosen_product.price.round(2)}."
+        puts " "
     end
 
     def add_category
         puts "Type in the name of a category you would like to add."
         inputted_name = gets.chomp.capitalize
         Category.create(name:inputted_name)
-        puts "#{inputted_name} has been added as a new category"
+        puts " "
+        puts "✅ #{inputted_name} has been added as a new category"
+        puts " "
     end
 
     def add_product
@@ -177,6 +197,9 @@ class StoreApp
                                 end
 
         ProductCategory.create(product: new_product, category: category_to_assign)
+        puts " "
+        puts "✅ #{name_entered} has been added to the #{category_choice} category."
+        puts " "
     end
 
     def delete_product
@@ -201,21 +224,22 @@ class StoreApp
         puts " "
         sleep(1)
         puts "#{product_choice_name} has been deleted from store inventory."
+        puts " "
     end
    
     # private
     def greeting
         puts " "
-        puts "Welcome to StoreManager! 🛍"
+        puts "🛍  Welcome to StoreManager! 🛍"
         sleep(0.5)
         puts " "
-        puts " 🛒"
-        puts " "
-        sleep(0.5)
-        puts " 🛒 🛒"
-        puts " "
-        sleep(0.5)
-        puts " 🛒 🛒 🛒"
+        # puts " 🛒"
+        # puts " "
+        # sleep(0.5)
+        # puts " 🛒 🛒"
+        # puts " "
+        # sleep(0.5)
+        puts "    🛒       🛒        🛒"
         puts " "
         sleep(0.5)
         puts "Please enter your username to access inventory."
@@ -234,19 +258,60 @@ class StoreApp
             Product.all.each do |product|           
                 product.update(price: (product.price - (product.price * 0.1)).round(2))
             end
+            puts " "
+            puts "❗️A 10% storewide discount has been applied to your inventory.❗️"
+            puts " "
         elsif input == 2
             Product.all.each do |product|           
                 product.update(price: (product.price - (product.price * 0.25)).round(2))
             end 
+            puts " "
+            puts "❗️A 25% storewide discount has been applied to your inventory.❗️"
+            puts " "
         elsif input == 3
             Product.all.each do |product|           
                 product.update(price: (product.price - (product.price * 0.5)).round(2))
             end
+            puts " "
+            puts "❗️A 50% storewide discount has been applied to your inventory.❗️"
+            puts " "
         else 
             puts "Please enter a valid discount option."
         end
 
         # binding.pry
     end 
+
+    def add_a_user
+        puts " "
+        puts "Type in the name of the user you would like to add."
+        puts " "
+        inputted_name = gets.chomp.downcase
+        User.create(name:inputted_name)
+        puts " "
+        puts "👤 #{inputted_name.capitalize} has been added as a new user and can now access inventory."
+        puts " "
+    end
+
+    def delete_a_user
+
+        y = User.all.map do |user|
+            "#{user.name.capitalize}"  
+            end  
+        puts " "
+        user_choice_name = TTY::Prompt.new.select("Choose a user to delete.\r\n", y)
+
+        # user_choice = User.find_by(name: user_choice_name.downcase)
+
+
+        User.where(name: user_choice_name.downcase).destroy_all
+
+        puts " "
+        puts "🗑    🗑    🗑"
+        puts " "
+        sleep(1)
+        puts "#{user_choice_name} has been deleted and can no longer access inventory."
+        puts " "
+    end
 
 end 

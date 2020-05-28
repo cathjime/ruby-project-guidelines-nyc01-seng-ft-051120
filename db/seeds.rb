@@ -2,6 +2,7 @@
 Product.delete_all
 Category.delete_all
 ProductCategory.delete_all
+User.delete_all
 
 #Category
 children = Category.create(name: "Children")
@@ -19,7 +20,7 @@ legos = Product.create(name:"Legos", price:45.00 , tagline: "Build fun structure
 ps4 = Product.create(name:"PlayStation 4", price:200.00 , tagline: "Hours of Gaming!")
 
 blender = Product.create(name:"Blender", price:29.99 , tagline: "Make delicous smoothies!")
-tv = Product.create(name:"Television", price:315.00 , tagline: "create HD Widescreen!")
+tv = Product.create(name:"Television", price:315.00 , tagline: "HD Widescreen!")
 charger = Product.create(name:"Charger", price:19.99 , tagline: "Rapid charge!")
 headphones = Product.create(name:"Headphones", price:60.00 , tagline: "Bluetooth!")
 microwave = Product.create(name:"Microwave", price:89.99 , tagline: "Heat up meals!")
@@ -91,3 +92,8 @@ cowboy_boots_pc = ProductCategory.create(product: cowboy_boots, category: clothi
 pants_pc = ProductCategory.create(product: pants, category: clothing)
 hat_pc = ProductCategory.create(product: hat, category: clothing)
 socks_pc = ProductCategory.create(product: socks, category: clothing)
+
+#User
+pam = User.create(name: "pam")
+michael = User.create(name: "michael")
+dwight = User.create(name: "dwight")
