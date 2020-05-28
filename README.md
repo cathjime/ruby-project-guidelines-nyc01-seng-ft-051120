@@ -1,5 +1,7 @@
 # StoreManager 
- - A tool for store inventory management, created by Catherine Jimenez and Chaya Greisman. 
+ - A tool for store inventory management, created by Catherine Jimenez and Chaya Greisman.
+ ########in the form of a simple CLI app #######
+
 
 
 # Install Instructions

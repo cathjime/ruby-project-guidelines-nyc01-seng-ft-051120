@@ -124,7 +124,7 @@ class StoreApp
                     end
                     puts " "
             chosen.products.each do |product|
-                puts "🔸 #{product.name} - #{product.price.round(2)} - #{product.tagline}"
+                puts "🔸 #{product.name} - $#{product.price.round(2)} - #{product.tagline}"
                 puts " "
             end
             puts " "
