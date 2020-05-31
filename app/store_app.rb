@@ -171,7 +171,7 @@ class StoreApp
 
         category_to_assign = Category.all.find do |category|
                                 category.name == category_choice
-                             end
+                                end
 
         ProductCategory.create(product: new_product, category: category_to_assign)
         puts " "
