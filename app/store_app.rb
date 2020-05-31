@@ -10,23 +10,11 @@ class StoreApp
         user_input = gets.chomp.downcase 
         if valid_user_array.include?(user_input)
         puts " "
-        puts "Hi #{user_input.capitalize}! Here is the main menu: "  
+        puts "Hi #{user_input.capitalize}! Here is the main menu: "  #present list of options
         return main_menu
         else puts "Access denied. Not a recognized user." 
-        run 
+        run  #- calls run again to send user back to welcome prompt 
         end
-    end 
-
-    def greeting
-        puts " "
-        puts "🛍  Welcome to StoreManager! 🛍"
-        sleep(0.5)
-        puts " "
-        puts "    🛒       🛒        🛒"
-        puts " "
-        sleep(0.5)
-        puts "Please enter your username to access inventory."
-        puts " "
     end 
 
     def valid_user_array
@@ -34,6 +22,17 @@ class StoreApp
             user.name
         end
     end
+
+    def return_to_main
+        puts "Type 'r' to return to main menu."
+        input = gets.chomp
+        if input == "r"
+        main_menu
+        else 
+        puts "Sorry, we didn't recognize that command."
+        return_to_main
+        end 
+    end 
 
     def main_menu   
         main_menu_text     
@@ -77,6 +76,7 @@ class StoreApp
             sleep(1)
             main_menu
         end 
+
     end 
 
     def main_menu_text #prints list of menu options 
@@ -96,17 +96,6 @@ class StoreApp
         puts " "
         puts "Choose an action by entering a number." #how to incorporate error using tty prompt
         puts " "
-    end 
-
-    def return_to_main
-        puts "Type 'r' to return to main menu."
-        input = gets.chomp
-        if input == "r"
-        main_menu
-        else 
-        puts "Sorry, we didn't recognize that command."
-        return_to_main
-        end 
     end 
 
     def view_all_products #pulls up product list 
@@ -129,7 +118,7 @@ class StoreApp
     end 
 
 
-    def display_products_by_category(category_choice)   
+    def display_products_by_category(category_choice)   #ERROR - products is undefined
             chosen = Category.all.find do |category|
                     category.name == category_choice
                     end
@@ -139,6 +128,40 @@ class StoreApp
                 puts " "
             end
             puts " "
+    end
+
+
+    def product_menu  #prints out list of products to choose from
+        y = Product.all.map do |product|
+            "#{product.name}"  
+        end  
+        puts " "
+        product_choice = TTY::Prompt.new.select("Choose a product to change price.\r\n", y)
+        update_product_price(product_choice)
+    end
+
+
+    def update_product_price(input)
+        
+        chosen_product = Product.all.find do |product|
+                        product.name == input
+                        end
+        puts " "
+        puts "The current price is: $#{chosen_product.price.round(2)}. Please enter a new price. Make sure it is a number, or the price will default to $0 :"    
+        new_price = gets.chomp.to_f  
+        chosen_product.update(price:new_price) 
+        puts " "
+        puts "The price has been reset to $#{chosen_product.price.round(2)}."
+        puts " "
+    end
+
+    def add_category
+        puts "Type in the name of a category you would like to add."
+        inputted_name = gets.chomp.capitalize
+        Category.create(name:inputted_name)
+        puts " "
+        puts "✅ #{inputted_name} has been added as a new category"
+        puts " "
     end
 
     def add_product
@@ -179,38 +202,6 @@ class StoreApp
         puts " "
     end
 
-    def add_category
-        puts "Type in the name of a category you would like to add."
-        inputted_name = gets.chomp.capitalize
-        Category.create(name:inputted_name)
-        puts " "
-        puts "✅ #{inputted_name} has been added as a new category"
-        puts " "
-    end
-
-    def product_menu  #prints out list of products to choose from to change price
-        y = Product.all.map do |product|
-            "#{product.name}"  
-        end  
-        puts " "
-        product_choice = TTY::Prompt.new.select("Choose a product to change price.\r\n", y)
-        update_product_price(product_choice)
-    end
-
-    def update_product_price(input)
-        
-        chosen_product = Product.all.find do |product|
-                        product.name == input
-                        end
-        puts " "
-        puts "The current price is: $#{chosen_product.price.round(2)}. Please enter a new price. Make sure it is a number, or the price will default to $0 :"    
-        new_price = gets.chomp.to_f  
-        chosen_product.update(price:new_price) 
-        puts " "
-        puts "The price has been reset to $#{chosen_product.price.round(2)}."
-        puts " "
-    end
-
     def delete_product
 
         y = Product.all.map do |product|
@@ -235,6 +226,25 @@ class StoreApp
         puts " "
     end
    
+    # private
+    def greeting
+        puts " "
+        puts "🛍  Welcome to StoreManager! 🛍"
+        sleep(0.5)
+        puts " "
+        # puts " 🛒"
+        # puts " "
+        # sleep(0.5)
+        # puts " 🛒 🛒"
+        # puts " "
+        # sleep(0.5)
+        puts "    🛒       🛒        🛒"
+        puts " "
+        sleep(0.5)
+        puts "Please enter your username to access inventory."
+        puts " "
+    end 
+
     def storewide_discounts
         puts " "
         puts "1. 10%"
@@ -267,6 +277,8 @@ class StoreApp
         else 
             puts "Please enter a valid discount option."
         end
+
+        # binding.pry
     end 
 
     def add_a_user
@@ -287,7 +299,10 @@ class StoreApp
             end  
         puts " "
         user_choice_name = TTY::Prompt.new.select("Choose a user to delete.\r\n", y)
-        
+
+        # user_choice = User.find_by(name: user_choice_name.downcase)
+
+
         User.where(name: user_choice_name.downcase).destroy_all
 
         puts " "
