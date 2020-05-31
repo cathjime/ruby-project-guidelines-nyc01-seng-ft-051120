@@ -2,8 +2,6 @@ require "tty-prompt"
 require "pry"
 
 class StoreApp 
-
-    prompt = TTY::Prompt.new
    
     def run 
         greeting
@@ -79,7 +77,7 @@ class StoreApp
         end 
     end 
 
-    def main_menu_text #prints list of menu options 
+    def main_menu_text 
         puts " "
         puts "🧿 Main Menu: 🧿"
         puts " "
@@ -92,9 +90,9 @@ class StoreApp
         puts "7. Apply storewide discount"
         puts "8. Add a user"
         puts "9. Delete a user"
-        puts "10. Log out" #call method that doesn't have  return value - i.e. goodbye text
+        puts "10. Log out" 
         puts " "
-        puts "Choose an action by entering a number." #how to incorporate error using tty prompt
+        puts "Choose an action by entering a number." 
         puts " "
     end 
 
@@ -109,7 +107,7 @@ class StoreApp
         end 
     end 
 
-    def view_all_products #pulls up product list 
+    def view_all_products 
         puts " "
         Product.all.each do |product|
         puts "🔸 #{product.name} - $#{product.price.round(2)}"
@@ -119,7 +117,7 @@ class StoreApp
         puts " "
     end 
     
-    def view_by_category #pulls up category list
+    def view_by_category 
         y = Category.all.map do |category|
             "#{category.name}"
         end 
@@ -188,7 +186,7 @@ class StoreApp
         puts " "
     end
 
-    def product_menu  #prints out list of products to choose from to change price
+    def product_menu  
         y = Product.all.map do |product|
             "#{product.name}"  
         end  
@@ -219,14 +217,11 @@ class StoreApp
         puts " "
         product_choice_name = TTY::Prompt.new.select("Choose a product to delete it.\r\n", y)
 
-        # input = gets.chomp
-
         product_choice = Product.find_by(name: product_choice_name)
 
         ProductCategory.where(product: product_choice).destroy_all
 
         Product.where(name: product_choice_name).destroy_all
-
         puts " "
         puts "🗑    🗑    🗑"
         puts " "
