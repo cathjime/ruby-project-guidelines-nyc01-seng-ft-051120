@@ -8,10 +8,10 @@ class StoreApp
         user_input = gets.chomp.downcase 
         if valid_user_array.include?(user_input)
         puts " "
-        puts "Hi #{user_input.capitalize}! Here is the main menu: "  #present list of options
+        puts "Hi #{user_input.capitalize}! Here is the main menu: "  
         return main_menu
         else puts "Access denied. Not a recognized user." 
-        run  #- calls run again to send user back to welcome prompt 
+        run  
         end
     end 
 
@@ -126,8 +126,7 @@ class StoreApp
         display_products_by_category(category_choice)
     end 
 
-
-    def display_products_by_category(category_choice)   #ERROR - products is undefined
+    def display_products_by_category(category_choice)   
             chosen = Category.all.find do |category|
                     category.name == category_choice
                     end
@@ -139,8 +138,7 @@ class StoreApp
             puts " "
     end
 
-
-    def product_menu  #prints out list of products to choose from
+    def product_menu  
         y = Product.all.map do |product|
             "#{product.name}"  
         end  
@@ -148,7 +146,6 @@ class StoreApp
         product_choice = TTY::Prompt.new.select("Choose a product to change price.\r\n", y)
         update_product_price(product_choice)
     end
-
 
     def update_product_price(input)
         
@@ -199,7 +196,6 @@ class StoreApp
         end 
 
         category_choice = TTY::Prompt.new.select("Please assign it to a category below:", y)
-
 
         category_to_assign = Category.all.find do |category|
                                 category.name == category_choice
@@ -264,18 +260,11 @@ class StoreApp
         puts " "
     end
    
-    # private
     def greeting
         puts " "
         puts "🛍  Welcome to StoreManager! 🛍"
         sleep(0.5)
         puts " "
-        # puts " 🛒"
-        # puts " "
-        # sleep(0.5)
-        # puts " 🛒 🛒"
-        # puts " "
-        # sleep(0.5)
         puts "    🛒       🛒        🛒"
         puts " "
         sleep(0.5)
@@ -315,8 +304,6 @@ class StoreApp
         else 
             puts "Please enter a valid discount option."
         end
-
-        # binding.pry
     end 
 
     def add_a_user
@@ -337,9 +324,6 @@ class StoreApp
             end  
         puts " "
         user_choice_name = TTY::Prompt.new.select("Choose a user to delete.\r\n", y)
-
-        # user_choice = User.find_by(name: user_choice_name.downcase)
-
 
         User.where(name: user_choice_name.downcase).destroy_all
 
